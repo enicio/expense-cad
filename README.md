@@ -110,11 +110,3 @@ POST http://localhost:3333/expense
 
 GET http://localhost:3333/expense
 
-
-
-
-
-
-
-Contribuições
-Sinta-se à vontade para contribuir com este projeto!
