@@ -107,6 +107,7 @@ POST http://localhost:3333/expense
 
 #### Buscar despesas
 * Necessário informar o token de autenticação
+
 GET http://localhost:3333/expense
 
 
