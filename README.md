@@ -56,14 +56,13 @@ Inicie o projeto
 npm run start
 ```
 
-Teste a API utilizando ferramentas como Postman ou Insomnia.
-
 Execução dos testes
 ```bash
 npm run tests
 ```
 
 
+Teste a API utilizando ferramentas como Postman ou Insomnia.
 
 
 #### Exemplo de Uso
