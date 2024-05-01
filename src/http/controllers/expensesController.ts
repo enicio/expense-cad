@@ -1,7 +1,8 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
-import { InMemoryExpenseRepository } from '../../repository/in-memory/in-memory-expense'
 import { ExpenseService } from '../../services/expenses-service'
+import { PgExpensesRepository } from '../../repository/postgre-db/pg-expenses'
+import { PgUsersRepository } from '../../repository/postgre-db/pg-users'
 
 export async function createExpense(
   request: FastifyRequest,
@@ -15,8 +16,9 @@ export async function createExpense(
 
   const { description, date, amount } = expenceBodySchema.parse(request.body)
 
-  const inMemoryExpenseRepository = new InMemoryExpenseRepository()
-  const expenseService = new ExpenseService(inMemoryExpenseRepository)
+  const expenseRepository = new PgExpensesRepository()
+  const userRepository = new PgUsersRepository()
+  const expenseService = new ExpenseService(expenseRepository, userRepository)
 
   const data = await expenseService.createExpense({
     description,
@@ -29,8 +31,9 @@ export async function createExpense(
 }
 
 export async function getExpense(request: FastifyRequest, reply: FastifyReply) {
-  const inMemoryExpenseRepository = new InMemoryExpenseRepository()
-  const expenseService = new ExpenseService(inMemoryExpenseRepository)
+  const expenseRepository = new PgExpensesRepository()
+  const userRepository = new PgUsersRepository()
+  const expenseService = new ExpenseService(expenseRepository, userRepository)
 
   try {
     const data = await expenseService.getExpense(request.user.sub)
