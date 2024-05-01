@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 services:
   # app:
   #   build:
@@ -28,9 +28,15 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-
+  redis-queue:
+    image: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
 volumes:
   db_data:
+  dragonflydata:
 networks:
   app-network:
     driver: bridge

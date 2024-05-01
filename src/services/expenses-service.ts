@@ -1,3 +1,4 @@
+import { queueEmail } from '../lib/bull-queue'
 import { sendEmail } from '../lib/send-email'
 import {
   ExpenseRepository,
@@ -5,10 +6,24 @@ import {
 } from '../repository/expense-repository'
 import { UserRepository } from '../repository/user-repository'
 
+import { Queue } from 'bullmq'
+
+const REDIS_HOST = '0.0.0.0'
+const REDIS_PORT = 6379
+const QUEUE_NAME = 'foo'
+
+const newQueue = new Queue(QUEUE_NAME, {
+  connection: {
+    host: REDIS_HOST,
+    port: REDIS_PORT
+  },
+})
+
 export class ExpenseService {
   constructor(
     private expenseRepository: ExpenseRepository,
     private userRepository: UserRepository,
+    private myQueue = newQueue
   ) {}
 
   async createExpense(data: expenseProps) {
@@ -19,7 +34,8 @@ export class ExpenseService {
       throw new Error('User not found')
     }
     try {
-      await sendEmail(expense, user)
+      // Enfileirando envio de email
+      queueEmail(expense, user, this.myQueue, sendEmail)
     } catch (error: any) {
       console.error(error.message)
     }

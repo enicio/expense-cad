@@ -9,6 +9,9 @@ export class PgExpensesRepository implements ExpenseRepository {
     }
 
     const { rows } = await pool.query(query)
+    if (!rows[0]) {
+      throw new Error('Error creating expense')
+    }
     return rows[0]
   }
 
