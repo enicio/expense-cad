@@ -7,6 +7,7 @@ import { InMemoryUserRepository } from '../repository/in-memory/in-memory-user'
 describe('ExpensesService', () => {
   test('Create a expense', async () => {
     const inMemoryUserRepository = new InMemoryUserRepository()
+    const userRepository = new InMemoryUserRepository()
     inMemoryUserRepository.createUser({
       id: '123',
       name: 'John Doe',
@@ -22,7 +23,7 @@ describe('ExpensesService', () => {
     }
 
     const expenseRepository = new InMemoryExpenseRepository()
-    const expenseService = new ExpenseService(expenseRepository)
+    const expenseService = new ExpenseService(expenseRepository, userRepository)
 
     const { expense } = await expenseService.createExpense(expense_1)
 

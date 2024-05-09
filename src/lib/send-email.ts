@@ -1,3 +1,4 @@
+import { randomInt } from 'crypto'
 import { expenseProps } from '../repository/expense-repository'
 import { createUserProps } from '../repository/user-repository'
 
@@ -21,7 +22,21 @@ export const sendEmail = async (
 
       Equipe do Sistema de Despesas`,
   }
-  console.log('----------------------------------------------------')
+  const sendMailPromisse = new Promise((resolve, reject) => {
+    let x = true
+    const random = randomInt(1, 10)
+    console.log(`Random: ${random}`)
+    random > 5 ? (x = true) : (x = false)
+
+    if (x) {
+      setTimeout(() => {
+        resolve('Email enviado com sucesso!')
+      }, 3000)
+    } else {
+      reject(new Error('Erro ao enviar email!'))
+    }
+  })
+  /* console.log('----------------------------------------------------')
   console.log('Simulando envio de email:')
   console.log('----------------------------------------------------')
   console.log(`De: ${emailData.from}`)
@@ -29,4 +44,8 @@ export const sendEmail = async (
   console.log(`Assunto: ${emailData.subject}`)
   console.log(`Conteúdo: ${emailData.text}`)
   console.log('----------------------------------------------------')
+*/
+  return sendMailPromisse.then((res) => {
+    console.log(res)
+  })
 }

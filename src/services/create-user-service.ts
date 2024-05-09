@@ -5,6 +5,7 @@ export class CreateUserService {
   constructor(private userRepository: UserRepository) {}
   async createUser({ id, name, email, password }: createUserProps) {
     const hashedPassword = await hash(password, 6)
+    console.log('Create user service')
 
     const userWithSameEmail = await this.userRepository.findUserByEmail(email)
 
@@ -13,7 +14,6 @@ export class CreateUserService {
     }
 
     const user = await this.userRepository.createUser({
-      id,
       name,
       email,
       password: hashedPassword,
