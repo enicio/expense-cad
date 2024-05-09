@@ -1,7 +1,8 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { AuthenticateService } from '../../services/authenticate-service'
 import { z } from 'zod'
-import { InMemoryUserRepository } from '../../repository/in-memory/in-memory-user'
+// import { InMemoryUserRepository } from '../../repository/in-memory/in-memory-user'
+import { PgUsersRepository } from '../../repository/postgre-db/pg-users'
 
 export async function authenticate(
   request: FastifyRequest,
@@ -14,7 +15,8 @@ export async function authenticate(
 
   const { email, password } = authenticateBodySchema.parse(request.body)
 
-  const userRepository = new InMemoryUserRepository()
+  // const userRepository = new InMemoryUserRepository()
+  const userRepository = new PgUsersRepository()
   const authenticateService = new AuthenticateService(userRepository)
 
   try {
