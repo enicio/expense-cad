@@ -6,18 +6,11 @@ import {
 } from '../repository/expense-repository'
 import { UserRepository } from '../repository/user-repository'
 
-import { Queue, Worker } from 'bullmq'
+import { Worker } from 'bullmq'
+import { newQueue } from '../queue'
 
 const REDIS_HOST = '0.0.0.0'
 const REDIS_PORT = 6379
-const QUEUE_NAME = 'foo'
-
-const newQueue = new Queue(QUEUE_NAME, {
-  connection: {
-    host: REDIS_HOST,
-    port: REDIS_PORT,
-  },
-})
 
 const worker = new Worker(
   'foo',
@@ -48,16 +41,17 @@ worker.on('failed', (job: any, err: any) => {
 export class ExpenseService {
   constructor(
     private expenseRepository: ExpenseRepository,
-    private userRepository: UserRepository, // private myQueue = newQueue,
+    private userRepository: UserRepository,
   ) {}
 
   async createExpense(data: expenseProps) {
     const user = await this.userRepository.findUserById(data.userId)
-    const expense = await this.expenseRepository.createExpense(data)
 
     if (!user) {
       throw new Error('User not found')
     }
+
+    const expense = await this.expenseRepository.createExpense(data)
     try {
       // Enfileirando envio de email
       queueEmail(expense, user, newQueue)
