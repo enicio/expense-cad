@@ -1,13 +1,6 @@
+import { addJobToQueue } from '../queue'
+
 export async function queueEmail(expense: any, user: any, myQueue: any) {
-  await myQueue.add(
-    'send-email',
-    { expense, user },
-    {
-      attempts: 3,
-      backoff: {
-        type: 'exponential',
-        delay: 1000,
-      },
-    },
-  )
+  const job = await addJobToQueue('send-email', { expense, user }, myQueue)
+  console.log(`Job ${job.id} added to queue`)
 }
