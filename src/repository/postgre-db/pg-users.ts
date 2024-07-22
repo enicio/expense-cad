@@ -33,7 +33,6 @@ export class PgUsersRepository implements UserRepository {
     password,
   }: createUserProps): Promise<createUserOutputProps> {
     // Implementar lógica para criar usuário
-    console.log('Create user')
     const text =
       'INSERT INTO users_3(name, email, password) VALUES($1, $2, $3) RETURNING *'
     const values = [name, email, password]

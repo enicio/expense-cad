@@ -12,7 +12,6 @@ export async function createUser(request: FastifyRequest, reply: FastifyReply) {
   })
   const { name, email, password } = schema.parse(request.body)
 
-  // const userRepository = new InMemoryUserRepository()
   const userRepository = new PgUsersRepository()
   const createUserService = new CreateUserService(userRepository)
   try {
@@ -32,8 +31,6 @@ export async function getUser(request: FastifyRequest, reply: FastifyReply) {
     id: z.string(),
   })
   const { id } = schema.parse(request.params)
-
-  // const userRepository = new InMemoryUserRepository()
   const userRepository = new PgUsersRepository()
   const user = await userRepository.findUserById(id)
   return reply.status(200).send({ user: { ...user, password: undefined } })
