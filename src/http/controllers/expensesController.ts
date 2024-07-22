@@ -3,6 +3,8 @@ import { z } from 'zod'
 import { ExpenseService } from '../../services/expenses-service'
 import { PgExpensesRepository } from '../../repository/postgre-db/pg-expenses'
 import { PgUsersRepository } from '../../repository/postgre-db/pg-users'
+import { queueEmail } from '../../lib/bull-queue'
+import { newQueue } from '../../queue'
 
 export async function createExpense(
   request: FastifyRequest,
@@ -18,7 +20,12 @@ export async function createExpense(
 
   const expenseRepository = new PgExpensesRepository()
   const userRepository = new PgUsersRepository()
-  const expenseService = new ExpenseService(expenseRepository, userRepository)
+  const expenseService = new ExpenseService(
+    expenseRepository,
+    userRepository,
+    queueEmail,
+    newQueue,
+  )
 
   const data = await expenseService.createExpense({
     description,
@@ -26,14 +33,18 @@ export async function createExpense(
     amount,
     userId: request.user.sub,
   })
-
   return reply.status(201).send(data)
 }
 
 export async function getExpense(request: FastifyRequest, reply: FastifyReply) {
   const expenseRepository = new PgExpensesRepository()
   const userRepository = new PgUsersRepository()
-  const expenseService = new ExpenseService(expenseRepository, userRepository)
+  const expenseService = new ExpenseService(
+    expenseRepository,
+    userRepository,
+    queueEmail,
+    newQueue,
+  )
 
   try {
     const data = await expenseService.getExpense(request.user.sub)
