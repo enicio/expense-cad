@@ -1,16 +1,19 @@
-import { queueEmail } from '../lib/bull-queue'
+// import { queueEmail } from '../lib/bull-queue'
 import {
   ExpenseRepository,
   expenseProps,
 } from '../repository/expense-repository'
 import { UserRepository } from '../repository/user-repository'
 
-import { newQueue } from '../queue'
+// import { newQueue } from '../queue'
+import { dayjs } from '../lib/dayjs'
 
 export class ExpenseService {
   constructor(
     private expenseRepository: ExpenseRepository,
     private userRepository: UserRepository,
+    private queueEmail: any,
+    private newQueue: any,
   ) {}
 
   async createExpense(data: expenseProps) {
@@ -23,11 +26,15 @@ export class ExpenseService {
     const expense = await this.expenseRepository.createExpense(data)
     try {
       // Enfileirando envio de email
-      queueEmail(expense, user, newQueue)
+      this.queueEmail(expense, user, this.newQueue)
     } catch (error: any) {
       console.error('Error send email', error.message)
     }
-    return { expense }
+    const expenseData = {
+      ...expense,
+      date: dayjs(expense.date).format('DD/MM/YYYY'),
+    }
+    return { expenseData }
   }
 
   async getExpense(id: string) {
