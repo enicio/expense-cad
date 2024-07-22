@@ -1,4 +1,4 @@
-import { describe, expect, test } from '@jest/globals'
+import { describe, expect, test, jest } from '@jest/globals'
 
 import { ExpenseService } from './expenses-service'
 import { InMemoryExpenseRepository } from '../repository/in-memory/in-memory-expense'
@@ -21,13 +21,23 @@ describe('ExpensesService', () => {
       description: 'compra da kombi',
       date: '2021-10-10',
     }
+    const queueEmail = jest.fn()
+    queueEmail.mockReturnValue('Email sent')
+
+    const newQueue = jest.fn()
+    newQueue.mockReturnValue('Queue created')
 
     const expenseRepository = new InMemoryExpenseRepository()
-    const expenseService = new ExpenseService(expenseRepository, userRepository)
+    const expenseService = new ExpenseService(
+      expenseRepository,
+      userRepository,
+      queueEmail,
+      newQueue,
+    )
 
-    const { expense } = await expenseService.createExpense(expense_1)
+    const { expenseData } = await expenseService.createExpense(expense_1)
 
-    expect(expense).toHaveProperty('amount', 1000)
-    expect(expense).toHaveProperty('id')
+    expect(expenseData).toHaveProperty('amount', 1000)
+    expect(expenseData).toHaveProperty('id')
   })
 })
