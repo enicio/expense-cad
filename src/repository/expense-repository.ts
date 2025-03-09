@@ -7,7 +7,6 @@ export interface expenseProps {
 }
 
 export interface ExpenseRepository {
-  findUserById(id: string): Promise<expenseProps | null>
   createExpense(data: expenseProps): Promise<expenseProps>
   getExpense(id: string): Promise<expenseProps[]>
 }

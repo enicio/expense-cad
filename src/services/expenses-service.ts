@@ -1,24 +1,40 @@
-import { sendEmail } from '../lib/send-email'
+// import { queueEmail } from '../lib/bull-queue'
 import {
   ExpenseRepository,
   expenseProps,
 } from '../repository/expense-repository'
-import { InMemoryUserRepository } from '../repository/in-memory/in-memory-user'
+import { UserRepository } from '../repository/user-repository'
+
+// import { newQueue } from '../queue'
+import { dayjs } from '../lib/dayjs'
 
 export class ExpenseService {
-  constructor(private expenseRepository: ExpenseRepository) {}
+  constructor(
+    private expenseRepository: ExpenseRepository,
+    private userRepository: UserRepository,
+    private queueEmail: any,
+    private newQueue: any,
+  ) {}
 
   async createExpense(data: expenseProps) {
-    const inMemoryUserRepository = new InMemoryUserRepository()
-    const user = await inMemoryUserRepository.findUserById(data.userId)
-    const expense = await this.expenseRepository.createExpense(data)
+    const user = await this.userRepository.findUserById(data.userId)
 
     if (!user) {
       throw new Error('User not found')
     }
-    // Simulando envio de email - observar resultado no console
-    sendEmail(expense, user)
-    return { expense }
+
+    const expense = await this.expenseRepository.createExpense(data)
+    try {
+      // Enfileirando envio de email
+      this.queueEmail(expense, user, this.newQueue)
+    } catch (error: any) {
+      console.error('Error send email', error.message)
+    }
+    const expenseData = {
+      ...expense,
+      date: dayjs(expense.date).format('DD/MM/YYYY'),
+    }
+    return { expenseData }
   }
 
   async getExpense(id: string) {

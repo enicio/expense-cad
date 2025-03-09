@@ -1,9 +1,9 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
-import { InMemoryUserRepository } from '../../repository/in-memory/in-memory-user'
 import { ProfileService } from '../../services/profile-service'
+import { PgUsersRepository } from '../../repository/postgre-db/pg-users'
 
 export async function profile(request: FastifyRequest, reply: FastifyReply) {
-  const userRepository = new InMemoryUserRepository()
+  const userRepository = new PgUsersRepository()
   const profileService = new ProfileService(userRepository)
 
   const { user } = await profileService.checkProfile({
